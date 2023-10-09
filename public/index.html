@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat Interface</title>
+    <style>
+      #chat {
+        height: 300px;
+        width: 300px;
+        overflow-y: scroll;
+        border: 1px solid black;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="character"></div>
+    <div id="chat"></div>
+    <input type="text" id="messageInput" />
+    <button id="sendButton">Send</button>
+
+    <script>
+      const socket = io('http://localhost:7000');
+
+      socket.on("connect", function () {
+        appendChat("Connected");
+      });
+
+      socket.on("message", function (data) {
+        appendChat("Received: " + data);
+      });
+
+      socket.on("character", function (data) {
+        document.getElementById("character").innerHTML =
+          "Character: " + data.name + ", " + data.summary;
+      });
+
+      document.getElementById("sendButton").onclick = function () {
+        var message = document.getElementById("messageInput").value;
+        socket.emit("message", message);
+        appendChat("Sent: " + message);
+        document.getElementById("messageInput").value = "";
+      };
+
+      function appendChat(message) {
+        var chat = document.getElementById("chat");
+        chat.innerHTML += message + "<br>";
+        chat.scrollTop = chat.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
