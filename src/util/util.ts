@@ -79,8 +79,6 @@ export function imagePromptBuilder(character: Character) {
 
   prompt += ", (looking at viewer), focused, detailed, natural light";
 
-  console.log(prompt);
-
   return prompt;
 }
 
