@@ -36,6 +36,29 @@ export async function processImage(images: string[]): Promise<string[]> {
 }
 
 /**
+ * Extends the Array prototype with a new method called formattedJoin.
+ * This method joins the elements of an array into a string, with a comma and space between each element.
+ * The last element is preceded by "and" instead of a comma.
+ * If the array is empty, an empty string is returned.
+ * @returns {string} The formatted string.
+ */
+declare global {
+  interface Array<T> {
+    formattedJoin(): string;
+  }
+}
+
+Array.prototype.formattedJoin = function () {
+  if (this.length > 1) {
+    return this.join(", ").replace(/, ([^,]*)$/, ", and $1");
+  } else if (this.length === 1) {
+    return this[0];
+  }
+
+  return "";
+};
+
+/**
  * Builds an image prompt string based on the given character object.
  * @param character - The character object to build the prompt from.
  * @returns The generated image prompt string.
@@ -101,7 +124,7 @@ export function negativeImagePromptBuilder(sex: string): string {
 
 export function promptBuilder(session: any): string {
   let prompt: string = `${session.character.name}'s Persona: ${session.character.summary}.`;
-  let lastMessages = session.messages.slice(-3);
+  let lastMessages = session.messages.slice(-5);
 
   for (let message of lastMessages) {
     prompt += `\n${
