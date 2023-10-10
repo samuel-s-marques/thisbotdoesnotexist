@@ -123,9 +123,7 @@ export function negativeImagePromptBuilder(sex: string): string {
 }
 
 export function promptBuilder(session: any): string {
-  // let prompt: string = `${session.character.name}'s Persona: ${session.character.summary}.`;
   let prompt: string = pListBuilder(session.character);
-  console.log(prompt);
   let lastMessages = session.messages.slice(-5);
 
   for (let message of lastMessages) {
