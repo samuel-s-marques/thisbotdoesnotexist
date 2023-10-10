@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", async (data: any) => {
-    const message = data.message
+    const message = data.message;
     sessions[socket.id].messages.push({ from: "User", message: message });
 
     const prompt = promptBuilder(sessions[socket.id]);
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
           rep_pen: 1.2,
           rep_pen_range: 1024,
           rep_pen_slope: 0.7,
-          temperature: 0.7,
+          temperature: 0.2,
           tfs: 0.9,
           top_a: 0,
           top_k: 0,
@@ -86,17 +86,15 @@ io.on("connection", (socket) => {
       console.log(`Server responded with status code: ${response.status}`);
 
       const serverMessage = response.data.results[0].text;
-      const trimmedMessage = serverMessage.trim();
-      const lines = trimmedMessage.split("\n");
+      let trimmedMessage = serverMessage.trim();
 
-      if (
-        lines[lines.length - 1].trim() === "You:" ||
-        lines[lines.length - 1].trim() === "User:"
-      ) {
-        lines.pop();
+      if (trimmedMessage.startsWith(`${character.name}:`)) {
+        trimmedMessage = trimmedMessage
+          .replace(`${character.name}:`, "")
+          .trim();
       }
 
-      const finalMessage = lines.join("\n");
+      const finalMessage = trimmedMessage.split("\n")[0];
 
       sessions[socket.id].messages.push({
         from: character.name,
