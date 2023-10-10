@@ -127,9 +127,11 @@ export function promptBuilder(session: any): string {
   let lastMessages = session.messages.slice(-5);
 
   for (let message of lastMessages) {
-    prompt += `\n${
-      message.from === "User" ? "User" : session.character.name
-    }: ${message.message}`;
+    if (message.from === "User") {
+      prompt += `${message.message}\n${session.character.name}:`;
+    } else {
+      prompt += `\n${session.character.name}: ${message.message}\nUser:`;
+    }
   }
 
   return prompt;
