@@ -4,15 +4,25 @@ import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import { Server } from "socket.io";
-import { promptBuilder } from "./util/util.js";
+import {
+  imagePromptBuilder,
+  negativeImagePromptBuilder,
+  processImage,
+  promptBuilder,
+} from "./util/util.js";
+import fs from "fs";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-const koboldHost = process.env.KB_HOST;
-const koboldPort = process.env.KB_PORT;
+const kbHost = process.env.KB_HOST;
+const kbPort = process.env.KB_PORT;
+
+const sdHost = process.env.SD_HOST;
+const sdPort = process.env.SD_PORT;
+
 const port = process.env.PORT;
 const io = new Server(7000, {
   cors: {
@@ -23,7 +33,7 @@ const io = new Server(7000, {
 const __dirname = path.resolve();
 var sessions = {};
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   socket.join(socket.id);
   const forge = new CharacterForge();
   let character = forge.forge();
@@ -44,6 +54,34 @@ io.on("connection", (socket) => {
     message: "Hi! How are you?",
   });
 
+  try {
+    console.log("Generating image");
+    const stableDiffusionResponse = await axios.post(
+      `${sdHost}:${sdPort}/sdapi/v1/txt2img`,
+      {
+        prompt: imagePromptBuilder(sessions[socket.id].character),
+        negative_prompt: negativeImagePromptBuilder(
+          sessions[socket.id].character.sex,
+        ),
+        steps: 30,
+        cfg_scale: 10,
+        width: 512,
+        height: 512,
+      },
+    );
+
+    const generatedImage = await processImage(
+      stableDiffusionResponse.data["images"],
+    );
+
+    sessions[socket.id].image = generatedImage[0];
+    socket.emit("image", sessions[socket.id].image);
+  } catch (error) {
+    console.error(
+      `💀 [server]: Error making request to Stable Diffusion: ${error}`,
+    );
+  }
+
   socket.on("message", async (data: any) => {
     const message = data.message;
     sessions[socket.id].messages.push({ from: "User", message: message });
@@ -51,8 +89,8 @@ io.on("connection", (socket) => {
     const prompt = promptBuilder(sessions[socket.id]);
 
     try {
-      const response = await axios.post(
-        `${koboldHost}:${koboldPort}/api/v1/generate`,
+      const koboldResponse = await axios.post(
+        `${kbHost}:${kbPort}/api/v1/generate`,
         {
           prompt: prompt,
           use_story: false,
@@ -82,10 +120,11 @@ io.on("connection", (socket) => {
           headers: { "Content-Type": "application/json" },
         },
       );
-      console.log(response.data);
-      console.log(`Server responded with status code: ${response.status}`);
+      console.log(
+        `Server responded with status code: ${koboldResponse.status}`,
+      );
 
-      const serverMessage = response.data.results[0].text;
+      const serverMessage = koboldResponse.data.results[0].text;
       let trimmedMessage = serverMessage.trim();
 
       if (trimmedMessage.startsWith(`${character.name}:`)) {
@@ -105,19 +144,26 @@ io.on("connection", (socket) => {
         message: finalMessage,
       });
     } catch (error) {
-      console.error(
-        `💀 [server]: Error making request to other server: ${error}`,
-      );
+      console.error(`💀 [server]: Error making request to Kobold AI: ${error}`);
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log(`User disconnected: ${socket.id}`);
+
+    if (sessions[socket.id].image) {
+      fs.unlink(sessions[socket.id].image, (err) => {
+        if (err) {
+          console.error(`💀 [server]: Error deleting image: ${err}`);
+        }
+      });
+    }
+
     delete sessions[socket.id];
   });
 });
 
-app.get("/images/:filename", (req, res) => {});
+app.use("/output/", express.static(path.join(__dirname, "output")));
 
 app.use(express.static(path.join(__dirname, "public")));
 
