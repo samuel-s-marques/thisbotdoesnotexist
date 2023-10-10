@@ -25,14 +25,14 @@
     <button id="sendButton">Send</button>
 
     <script>
-      const socket = io('http://localhost:7000');
+      const socket = io("http://localhost:7000");
 
       socket.on("connect", function () {
-        appendChat("Connected");
+        appendChat({ from: "System", message: "Connected" });
       });
 
       socket.on("message", function (data) {
-        appendChat("Received: " + data);
+        appendChat(data);
       });
 
       socket.on("character", function (data) {
@@ -42,15 +42,44 @@
 
       document.getElementById("sendButton").onclick = function () {
         var message = document.getElementById("messageInput").value;
-        socket.emit("message", message);
-        appendChat("Sent: " + message);
+        socket.emit("message", { from: "User", message: message });
+        appendChat({ from: "User", message: message });
         document.getElementById("messageInput").value = "";
       };
 
-      function appendChat(message) {
+      function appendChat(data) {
         var chat = document.getElementById("chat");
-        chat.innerHTML += message + "<br>";
+        var messageElement = document.createElement("div");
+        var nameElement = document.createElement("span");
+
+        nameElement.textContent = data.from + ": ";
+        nameElement.style.fontWeight = "bold";
+
+        messageElement.appendChild(nameElement);
+        messageElement.appendChild(document.createTextNode(getMessage(data.message, data.from)));
+
+        if (data.from === "User") {
+          messageElement.style.textAlign = "right";
+          messageElement.style.color = "blue";
+        } else if (data.from === "System") {
+          messageElement.style.textAlign = "center";
+          messageElement.style.color = "red";
+        } else {
+          messageElement.style.color = "green";
+        }
+
+        chat.appendChild(messageElement);
         chat.scrollTop = chat.scrollHeight;
+      }
+
+      function getMessage(message, name) {
+        console.log(message);
+
+        if (message.includes(`${name}:`)) {
+          return message.split(":")[1];
+        } else {
+          return message;
+        }
       }
     </script>
   </body>
