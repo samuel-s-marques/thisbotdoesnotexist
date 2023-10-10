@@ -3,12 +3,27 @@
   <head>
     <title>Chat Interface</title>
     <style>
-      #chat {
-        height: 300px;
+      #chat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: 300px;
-        overflow-y: scroll;
+        height: 400px;
         border: 1px solid black;
         padding: 10px;
+        margin: 10px auto;
+      }
+      #chat {
+        flex: 1;
+        overflow-y: scroll;
+        width: 100%;
+        border: 1px solid black;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #character {
+        text-align: center;
+        font-weight: bold;
         margin-bottom: 10px;
       }
     </style>
@@ -19,10 +34,20 @@
     ></script>
   </head>
   <body>
-    <div id="character"></div>
-    <div id="chat"></div>
-    <input type="text" id="messageInput" />
-    <button id="sendButton">Send</button>
+    <div id="character">
+      <div id="character-data"></div>
+      <img
+        alt="Character Image"
+        width="512"
+        height="512"
+        id="character-image"
+      />
+    </div>
+    <div id="chat-container">
+      <div id="chat"></div>
+      <input type="text" id="messageInput" />
+      <button id="sendButton">Send</button>
+    </div>
 
     <script>
       const socket = io("http://192.168.0.37:7000");
@@ -36,8 +61,12 @@
       });
 
       socket.on("character", function (data) {
-        document.getElementById("character").innerHTML =
+        document.getElementById("character-data").innerHTML =
           "Character: " + data.name + ", " + data.summary;
+      });
+
+      socket.on("image", function (data) {
+        document.getElementById("character-image").src = data;
       });
 
       document.getElementById("sendButton").onclick = function () {
@@ -56,7 +85,9 @@
         nameElement.style.fontWeight = "bold";
 
         messageElement.appendChild(nameElement);
-        messageElement.appendChild(document.createTextNode(getMessage(data.message, data.from)));
+        messageElement.appendChild(
+          document.createTextNode(getMessage(data.message, data.from)),
+        );
 
         if (data.from === "User") {
           messageElement.style.textAlign = "right";
