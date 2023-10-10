@@ -123,16 +123,44 @@ export function negativeImagePromptBuilder(sex: string): string {
 }
 
 export function promptBuilder(session: any): string {
-  let prompt: string = `${session.character.name}'s Persona: ${session.character.summary}.`;
+  // let prompt: string = `${session.character.name}'s Persona: ${session.character.summary}.`;
+  let prompt: string = pListBuilder(session.character);
+  console.log(prompt);
   let lastMessages = session.messages.slice(-5);
 
   for (let message of lastMessages) {
     if (message.from === "User") {
-      prompt += `${message.message}\n${session.character.name}:`;
+      if (message.message.endsWith("\nUser:")) {
+        prompt += `${message.message}\n${session.character.name}:`;
+      } else {
+        prompt += `\nUser:${message.message}\n${session.character.name}:`;
+      }
     } else {
       prompt += `\n${session.character.name}: ${message.message}\nUser:`;
     }
   }
 
   return prompt;
+}
+
+export function pListBuilder(character: Character): string {
+  let appearance = `${character.name}'s appearance: hair(${character.hairStyle}, ${character.hairColor}), eyes(${character.eyeColor}), body(${character.bodyType.type}), clothings(${character.clothings.upperbody}, ${character.clothings.lowerbody}), ethnicity(${character.ethnicity})`;
+
+  const tags = ["slice of life", "real life"];
+  const scenario = `Conversation between User and ${character.name}`;
+
+  const attributes = character.personalityTraits
+    .map((trait) => trait.name)
+    .join(", ");
+  const hobbies = character.hobbies.join(", ");
+
+  let persona = `${character.name}'s persona: ${attributes}, hobbies(${hobbies}), ${character.occupation}, ${character.pronouns.subjectPronoun}/${character.pronouns.objectPronoun}, sexuality(${character.sexuality.sexuality})`;
+
+  if (character.phobia !== undefined) {
+    persona += `, fears(${character.phobia})`;
+  }
+
+  return `[${appearance};\nTags: ${tags.join(
+    ", ",
+  )};\n${scenario};\n${persona}]`;
 }
