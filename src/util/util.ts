@@ -23,8 +23,8 @@ export async function processImage(images: string[]): Promise<string[]> {
         fs.mkdirSync("output");
       }
 
-      fs.writeFileSync(`output/${uuid}.png`, outputImageBuffer);
-      listOfImages.push(`output/${uuid}.png`);
+      fs.writeFileSync(`output/images/${uuid}.png`, outputImageBuffer);
+      listOfImages.push(`output/images/${uuid}.png`);
     }
 
     console.log("Images processed and saved.");
