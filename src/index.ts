@@ -11,6 +11,7 @@ import {
   promptBuilder,
 } from "./util/util.js";
 import fs from "fs";
+import { TextToSpeechApi } from "./text_to_speech_api.js";
 
 dotenv.config();
 
@@ -23,12 +24,18 @@ const kbPort = process.env.KB_PORT;
 const sdHost = process.env.SD_HOST;
 const sdPort = process.env.SD_PORT;
 
+const elevenLabsApiKey = process.env.ELEVENLABS_API_KEY;
+
 const port = process.env.PORT;
 const io = new Server(7000, {
   cors: {
     origin: "*",
   },
 });
+const ttsApi = new TextToSpeechApi(
+  "https://api.elevenlabs.io/",
+  elevenLabsApiKey,
+);
 
 const __dirname = path.resolve();
 var sessions = {};
@@ -40,6 +47,7 @@ io.on("connection", async (socket) => {
 
   sessions[socket.id] = {
     character: character,
+    voiceId: ttsApi.getRandomVoiceId(character.sex),
     messages: [
       {
         from: character.name,
@@ -97,7 +105,7 @@ io.on("connection", async (socket) => {
           use_memory: false,
           use_authors_note: false,
           use_world_info: false,
-          max_content_length: 1600,
+          max_content_length: 1000,
           max_length: 180,
           rep_pen: 1.2,
           rep_pen_range: 1024,
@@ -134,6 +142,15 @@ io.on("connection", async (socket) => {
       }
 
       const finalMessage = trimmedMessage.split("\n")[0];
+
+      if (character.name !== "User") {
+        const ttsResponse = await ttsApi.getTextToSpeech(
+          sessions[socket.id].voiceId,
+          finalMessage,
+        );
+
+        socket.emit("tts", ttsResponse);
+      }
 
       sessions[socket.id].messages.push({
         from: character.name,
