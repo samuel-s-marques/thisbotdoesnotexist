@@ -32,6 +32,16 @@
       integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
       crossorigin="anonymous"
     ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
+      integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="character">
@@ -51,12 +61,21 @@
 
     <script>
       const socket = io("http://192.168.0.37:7000");
+      var notificationSound = new Howl({
+        src: ["notification.mp3"],
+      });
+
+      document.addEventListener("visibilitychange", onchange);
 
       socket.on("connect", function () {
         appendChat({ from: "System", message: "Connected" });
       });
 
       socket.on("message", function (data) {
+        if (document.hidden) {
+          notificationSound.play();
+        }
+
         appendChat(data);
       });
 
@@ -67,6 +86,22 @@
 
       socket.on("image", function (data) {
         document.getElementById("character-image").src = data;
+      });
+
+      socket.on("tts", function (data) {
+        var audio = new Howl({
+          src: [data],
+          html5: true,
+        });
+
+        audio.once("load", function () {
+          console.log("Playing audio");
+          audio.play();
+        });
+
+        audio.once("end", function () {
+          console.log("Audio ended");
+        });
       });
 
       document.getElementById("sendButton").onclick = function () {
