@@ -2,48 +2,23 @@
 <html>
   <head>
     <title>Chat Interface</title>
-    <style>
-      #chat-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 300px;
-        height: 400px;
-        border: 1px solid black;
-        padding: 10px;
-        margin: 10px auto;
-      }
-      #chat {
-        flex: 1;
-        overflow-y: scroll;
-        width: 100%;
-        border: 1px solid black;
-        padding: 10px;
-        margin-bottom: 10px;
-      }
-      #character {
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-    </style>
     <script
       src="https://cdn.socket.io/4.6.0/socket.io.min.js"
       integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
       crossorigin="anonymous"
     ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"
-      integrity="sha512-xi/RZRIF/S0hJ+yJJYuZ5yk6/8pCiRlEXZzoguSMl+vk2i3m6UjUO/WcZ11blRL/O+rnj94JRGwt/CHbc9+6EA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+    <link href="styles.css" rel="stylesheet" />
   </head>
   <body>
+    <div id="notification">
+      <audio>
+        <source src="notification.mp3" type="audio/mpeg" />
+      </audio>
+    </div>
     <div id="character">
       <div id="character-data"></div>
       <img
@@ -61,10 +36,8 @@
 
     <script>
       const socket = io("http://192.168.0.37:7000");
-      var notificationSound = new Howl({
-        src: ["notification.mp3"],
-      });
 
+      notificationSound = document.getElementById("notification");
       document.addEventListener("visibilitychange", onchange);
 
       socket.on("connect", function () {
@@ -89,19 +62,38 @@
       });
 
       socket.on("tts", function (data) {
-        var audio = new Howl({
-          src: [data],
-          html5: true,
+        const { filename, id } = data;
+
+        const messageElement = document.getElementById(id);
+        const audioElement = document.createElement("audio");
+        audioElement.id = id + "-audio";
+
+        const sourceElement = document.createElement("source");
+        sourceElement.src = filename;
+        sourceElement.type = "audio/mpeg";
+
+        audioElement.appendChild(sourceElement);
+
+        const audioButton = document.createElement("i");
+        audioButton.className = "material-symbols-outlined";
+        audioButton.textContent = "play_circle_filled";
+
+        audioButton.addEventListener("click", async function () {
+          console.log("clicked");
+          console.log(audioElement);
+          if (audioElement.paused) {
+            console.log("playing");
+            audioButton.textContent = "play_circle";
+            await audioElement.play();
+          } else {
+            console.log("paused");
+            audioButton.textContent = "pause_circle";
+            await audioElement.pause();
+          }
         });
 
-        audio.once("load", function () {
-          console.log("Playing audio");
-          audio.play();
-        });
-
-        audio.once("end", function () {
-          console.log("Audio ended");
-        });
+        messageElement.appendChild(audioElement);
+        messageElement.appendChild(audioButton);
       });
 
       document.getElementById("sendButton").onclick = function () {
@@ -119,6 +111,7 @@
         nameElement.textContent = data.from + ": ";
         nameElement.style.fontWeight = "bold";
 
+        messageElement.id = data.id;
         messageElement.appendChild(nameElement);
         messageElement.appendChild(
           document.createTextNode(getMessage(data.message, data.from)),
