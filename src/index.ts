@@ -12,6 +12,7 @@ import {
 } from "./util/util.js";
 import fs from "fs";
 import { TextToSpeechApi } from "./text_to_speech_api.js";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -50,8 +51,10 @@ io.on("connection", async (socket) => {
     voiceId: ttsApi.getRandomVoiceId(character.sex),
     messages: [
       {
+        id: 0,
         from: character.name,
         message: "Hi! How are you?",
+        audio: undefined,
       },
     ],
   };
@@ -93,6 +96,7 @@ io.on("connection", async (socket) => {
   socket.on("message", async (data: any) => {
     const message = data.message;
     sessions[socket.id].messages.push({ from: "User", message: message });
+    let audio: {} = {};
 
     const prompt = promptBuilder(sessions[socket.id]);
 
@@ -144,22 +148,46 @@ io.on("connection", async (socket) => {
       const finalMessage = trimmedMessage.split("\n")[0];
 
       if (character.name !== "User") {
+        const messageId = uuidv4();
+
+        socket.emit("message", {
+          id: messageId,
+          from: character.name,
+          message: finalMessage,
+        });
+
         const ttsResponse = await ttsApi.getTextToSpeech(
           sessions[socket.id].voiceId,
           finalMessage,
         );
 
-        socket.emit("tts", ttsResponse);
-      }
+        audio = {
+          filename: ttsResponse,
+          id: messageId,
+        };
+        socket.emit("tts", audio);
 
-      sessions[socket.id].messages.push({
-        from: character.name,
-        message: finalMessage,
-      });
-      socket.emit("message", {
-        from: character.name,
-        message: finalMessage,
-      });
+        sessions[socket.id].messages.push({
+          id: messageId,
+          from: character.name,
+          message: finalMessage,
+          audio: audio,
+        });
+      } else {
+        const messageId = uuidv4();
+
+        sessions[socket.id].messages.push({
+          from: character.name,
+          message: finalMessage,
+          id: messageId,
+        });
+
+        socket.emit("message", {
+          from: character.name,
+          message: finalMessage,
+          id: messageId,
+        });
+      }
     } catch (error) {
       console.error(`💀 [server]: Error making request to Kobold AI: ${error}`);
     }
