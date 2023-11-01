@@ -14,8 +14,8 @@
     <link href="styles.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="notification">
-      <audio>
+    <div>
+      <audio id="notification">
         <source src="notification.mp3" type="audio/mpeg" />
       </audio>
     </div>
@@ -76,20 +76,32 @@
 
         const audioButton = document.createElement("i");
         audioButton.className = "material-symbols-outlined";
-        audioButton.textContent = "play_circle_filled";
+        audioButton.textContent = "play_circle";
 
-        audioButton.addEventListener("click", async function () {
-          console.log("clicked");
-          console.log(audioElement);
-          if (audioElement.paused) {
-            console.log("playing");
-            audioButton.textContent = "play_circle";
-            await audioElement.play();
-          } else {
-            console.log("paused");
-            audioButton.textContent = "pause_circle";
-            await audioElement.pause();
-          }
+        // Load audio metadata and handle play/pause after loading
+        audioElement.addEventListener("loadedmetadata", function () {
+          audioButton.addEventListener("click", function () {
+            if (audioElement.paused) {
+              audioElement
+                .play()
+                .then(() => {
+                  console.log("playing");
+                  audioButton.textContent = "pause_circle";
+                })
+                .catch((error) => {
+                  console.error("Error playing audio:", error);
+                });
+            } else {
+              audioElement.pause();
+              console.log("paused");
+              audioButton.textContent = "play_circle";
+            }
+          });
+        });
+
+        // Handle audio playback errors
+        audioElement.addEventListener("error", function (event) {
+          console.error("Audio playback error:", event);
         });
 
         messageElement.appendChild(audioElement);
