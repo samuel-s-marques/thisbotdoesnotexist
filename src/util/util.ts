@@ -2,6 +2,8 @@ import sharp from "sharp";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { Character } from "character-forge";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 /**
  * Processes an array of base64-encoded images, saves them to disk, and returns an array of their file paths.
@@ -159,4 +161,14 @@ export function pListBuilder(character: Character): string {
   return `[${appearance};\nTags: ${tags.join(
     ", ",
   )};\n${scenario};\n${persona}]`;
+}
+
+export function processFile(file: string): any {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+
+  const filePath = path.join(__dirname, `../assets/${file}.json`);
+  const rawData = fs.readFileSync(filePath, "utf-8");
+
+  return JSON.parse(rawData);
 }
