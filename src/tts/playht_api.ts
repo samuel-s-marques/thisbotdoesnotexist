@@ -27,13 +27,13 @@ export class PlayHtApi {
   constructor() {
     dotenv.config();
 
-    this.baseUrl = "https://api.play.ht/";
+    this.baseUrl = "https://api.play.ht";
     this.userId = process.env.PLAYHT_USER_ID;
     this.apiKey = process.env.PLAYHT_API_KEY;
   }
 
   async saveAudio(text: string, voice: VoiceModel): Promise<string> {
-    const url = `${this.baseUrl}api/v2/tts/stream`;
+    const url = `${this.baseUrl}/api/v2/tts/stream`;
 
     try {
       if (!fs.existsSync("output")) {
@@ -41,8 +41,6 @@ export class PlayHtApi {
       }
 
       console.log(`🤖 [server]: Making Text-to-Speech request to PlayHT...`);
-      console.log(`🤖 [server]: Voice ID: ${voice.id}`);
-      console.log(`🤖 [server]: Voice Engine: ${voice.engine}`);
 
       const streamOptions: AxiosRequestConfig = {
         method: "POST",
@@ -70,7 +68,7 @@ export class PlayHtApi {
 
       return new Promise((resolve, reject) => {
         writer.on("finish", () => {
-          console.log(`🤖 [server]: Audio ${uuid}.mp3 saved.`);
+          console.log(`🤖 [server]: PlayHT's audio ${uuid}.mp3 saved.`);
           resolve(`output/audios/${uuid}.mp3`);
         });
 
@@ -102,12 +100,12 @@ export class PlayHtApi {
   }
 
   async getVoices(): Promise<any> {
-    const url = `${this.baseUrl}api/v2/voices`;
+    const url = `${this.baseUrl}/api/v2/voices`;
     try {
       const response = await axios.get(url, {
         headers: {
-          accept: "application/json",
-          "xi-api-key": this.apiKey,
+          AUTHORIZATION: this.apiKey,
+          'X-USER-ID': this.userId,
         },
       });
       return response.data;
