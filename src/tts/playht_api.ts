@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 import { processFile } from "../util/util.js";
 import dotenv from "dotenv";
 import { VoiceModel } from "./voice_model.js";
-import * as PlayHT from "playht";
 
 export type Emotion =
   | "female_happy"
@@ -31,11 +30,6 @@ export class PlayHtApi {
     this.baseUrl = "https://api.play.ht/";
     this.userId = process.env.PLAYHT_USER_ID;
     this.apiKey = process.env.PLAYHT_API_KEY;
-
-    PlayHT.init({
-      apiKey: process.env.PLAYHT_API_KEY,
-      userId: process.env.PLAYHT_USER_ID,
-    });
   }
 
   async saveAudio(text: string, voice: VoiceModel): Promise<string> {
@@ -48,15 +42,30 @@ export class PlayHtApi {
 
       console.log(`🤖 [server]: Making Text-to-Speech request to PlayHT...`);
       console.log(`🤖 [server]: Voice ID: ${voice.id}`);
+      console.log(`🤖 [server]: Voice Engine: ${voice.engine}`);
 
-      const stream = await PlayHT.stream(text, {
-        voiceEngine: "PlayHT2.0",
-        voiceId: voice.id,
-        outputFormat: "mp3",
-      });
+      const streamOptions: AxiosRequestConfig = {
+        method: "POST",
+        url: url,
+        headers: {
+          accept: "audio/mpeg",
+          "Content-Type": "application/json",
+          AUTHORIZATION: this.apiKey,
+          "X-USER-ID": this.userId,
+        },
+        responseType: "stream",
+        data: {
+          text: text,
+          voice: voice.id,
+          quality: "draft", // TODO: change quality to test it
+          output_format: "mp3",
+          voice_engine: voice.engine,
+        }
+      };
+
+      const response = await axios(streamOptions);
 
       const uuid = uuidv4();
-
       const writer = fs.createWriteStream(`output/audios/${uuid}.mp3`);
 
       return new Promise((resolve, reject) => {
@@ -72,7 +81,7 @@ export class PlayHtApi {
           reject(error);
         });
 
-        stream.pipe(writer);
+        response.data.pipe(writer);
       });
     } catch (error) {
       console.error(
