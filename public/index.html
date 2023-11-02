@@ -11,6 +11,12 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link href="styles.css" rel="stylesheet" />
   </head>
   <body>
@@ -19,139 +25,54 @@
         <source src="notification.mp3" type="audio/mpeg" />
       </audio>
     </div>
-    <div id="character">
-      <div id="character-data"></div>
-      <img
-        alt="Character Image"
-        width="512"
-        height="512"
-        id="character-image"
-      />
+
+    <div id="container">
+      <div id="profile">
+        <div id="image">
+          <img id="img" src="https://placehold.co/512x512" />
+          <div id="overlay"></div>
+        </div>
+
+        <div id="data-table">
+          <table>
+            <tr>
+              <th>Age:</th>
+              <td id="age"></td>
+            </tr>
+            <tr>
+              <th>Sex:</th>
+              <td id="sex"></td>
+            </tr>
+            <tr>
+              <th>Birthplace:</th>
+              <td id="birthplace"></td>
+            </tr>
+            <tr>
+              <th>Ethnicity:</th>
+              <td id="ethnicity"></td>
+            </tr>
+            <tr>
+              <th>Occupation:</th>
+              <td id="occupation"></td>
+            </tr>
+          </table>
+        </div>
+
+        <div id="summary">
+          <h3>Summary</h3>
+          <p id="summary-data"></p>
+        </div>
+      </div>
+      <div id="chat">
+        <div id="content"></div>
+        <div id="input">
+          <input type="text" id="message-input" placeholder="Write something" />
+          <button id="send" type="submit">
+            <span class="material-symbols-outlined"> send </span>
+          </button>
+        </div>
+      </div>
     </div>
-    <div id="chat-container">
-      <div id="chat"></div>
-      <input type="text" id="messageInput" />
-      <button id="sendButton">Send</button>
-    </div>
-
-    <script>
-      const socket = io("http://192.168.0.37:7000");
-
-      notificationSound = document.getElementById("notification");
-      document.addEventListener("visibilitychange", onchange);
-
-      socket.on("connect", function () {
-        appendChat({ from: "System", message: "Connected" });
-      });
-
-      socket.on("message", function (data) {
-        if (document.hidden) {
-          notificationSound.play();
-        }
-
-        appendChat(data);
-      });
-
-      socket.on("character", function (data) {
-        document.getElementById("character-data").innerHTML =
-          "Character: " + data.name + ", " + data.summary;
-      });
-
-      socket.on("image", function (data) {
-        document.getElementById("character-image").src = data;
-      });
-
-      socket.on("tts", function (data) {
-        const { filename, id } = data;
-
-        const messageElement = document.getElementById(id);
-        const audioElement = document.createElement("audio");
-        audioElement.id = id + "-audio";
-
-        const sourceElement = document.createElement("source");
-        sourceElement.src = filename;
-        sourceElement.type = "audio/mpeg";
-
-        audioElement.appendChild(sourceElement);
-
-        const audioButton = document.createElement("i");
-        audioButton.className = "material-symbols-outlined";
-        audioButton.textContent = "play_circle";
-
-        // Load audio metadata and handle play/pause after loading
-        audioElement.addEventListener("loadedmetadata", function () {
-          audioButton.addEventListener("click", function () {
-            if (audioElement.paused) {
-              audioElement
-                .play()
-                .then(() => {
-                  console.log("playing");
-                  audioButton.textContent = "pause_circle";
-                })
-                .catch((error) => {
-                  console.error("Error playing audio:", error);
-                });
-            } else {
-              audioElement.pause();
-              console.log("paused");
-              audioButton.textContent = "play_circle";
-            }
-          });
-        });
-
-        // Handle audio playback errors
-        audioElement.addEventListener("error", function (event) {
-          console.error("Audio playback error:", event);
-        });
-
-        messageElement.appendChild(audioElement);
-        messageElement.appendChild(audioButton);
-      });
-
-      document.getElementById("sendButton").onclick = function () {
-        var message = document.getElementById("messageInput").value;
-        socket.emit("message", { from: "User", message: message });
-        appendChat({ from: "User", message: message });
-        document.getElementById("messageInput").value = "";
-      };
-
-      function appendChat(data) {
-        var chat = document.getElementById("chat");
-        var messageElement = document.createElement("div");
-        var nameElement = document.createElement("span");
-
-        nameElement.textContent = data.from + ": ";
-        nameElement.style.fontWeight = "bold";
-
-        messageElement.id = data.id;
-        messageElement.appendChild(nameElement);
-        messageElement.appendChild(
-          document.createTextNode(getMessage(data.message, data.from)),
-        );
-
-        if (data.from === "User") {
-          messageElement.style.textAlign = "right";
-          messageElement.style.color = "blue";
-        } else if (data.from === "System") {
-          messageElement.style.textAlign = "center";
-          messageElement.style.color = "red";
-        } else {
-          messageElement.style.color = "green";
-        }
-
-        chat.appendChild(messageElement);
-        chat.scrollTop = chat.scrollHeight;
-      }
-
-      function getMessage(message, name) {
-        console.log(message);
-
-        if (message.includes(`${name}:`)) {
-          return message.split(`${name}:`)[1];
-        } else {
-          return message;
-        }
-      }
-    </script>
+    <script src="main.js"></script>
   </body>
 </html>
