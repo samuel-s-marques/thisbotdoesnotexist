@@ -127,7 +127,7 @@ export function promptBuilder(session: any): string {
   let lastMessages = session.messages.slice(-5);
 
   for (let message of lastMessages) {
-    if (message.from === "User") {
+    if (message.from === "user") {
       if (message.message.endsWith("\nUser:")) {
         prompt += `${message.message}\n${session.character.name}:`;
       } else {
