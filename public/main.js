@@ -7,7 +7,7 @@ socket.on("connect", function () {
   appendChat({
     id: "0",
     from: "system",
-    message: "This chat may bend the truth a bit.",
+    message: "Caution: The bot likes to make up stuff.",
   });
 });
 
