@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node-esm src/index.ts",
     "lint": "eslint . --ext=.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "sass": "sass --watch public/styles.scss public/styles.css"
   },
   "type": "module",
   "author": "",
