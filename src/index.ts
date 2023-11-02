@@ -33,7 +33,7 @@ const io = new Server(7000, {
   },
 });
 
-const ttsApi = new PlayHtApi();
+const ttsApi = new ElevenLabsApi();
 
 const __dirname = path.resolve();
 var sessions = {};
