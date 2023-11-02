@@ -46,11 +46,15 @@ h3 {
     #overlay {
       position: absolute;
       bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: #f1f1f1;
+      left: 0;
       width: 100%;
+      display: flex;
+      box-sizing: border-box;
+      color: white;
       font-size: 20px;
-      padding: 12px;
+      padding: 60px 12px 12px 12px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+      border-radius: 0 0 16px 16px;
     }
   }
 
