@@ -49,7 +49,7 @@ io.on("connection", async (socket) => {
     messages: [
       {
         id: 0,
-        from: character.name,
+        from: "bot",
         message: "Hi! How are you?",
         audio: undefined,
       },
@@ -58,7 +58,7 @@ io.on("connection", async (socket) => {
 
   socket.emit("character", sessions[socket.id].character);
   socket.emit("message", {
-    from: character.name,
+    from: "bot",
     message: "Hi! How are you?",
   });
 
@@ -92,7 +92,7 @@ io.on("connection", async (socket) => {
 
   socket.on("message", async (data: any) => {
     const message = data.message;
-    sessions[socket.id].messages.push({ from: "User", message: message });
+    sessions[socket.id].messages.push({ from: "user", message: message });
     let audio: {} = {};
 
     const prompt = promptBuilder(sessions[socket.id]);
@@ -144,12 +144,12 @@ io.on("connection", async (socket) => {
 
       const finalMessage = trimmedMessage.split("\n")[0];
 
-      if (character.name !== "User") {
+      if (character.name !== "user") {
         const messageId = uuidv4();
 
         socket.emit("message", {
           id: messageId,
-          from: character.name,
+          from: "bot",
           message: finalMessage,
         });
 
@@ -168,7 +168,7 @@ io.on("connection", async (socket) => {
 
         sessions[socket.id].messages.push({
           id: messageId,
-          from: character.name,
+          from: "bot",
           message: finalMessage,
           audio: audio,
         });
@@ -176,13 +176,13 @@ io.on("connection", async (socket) => {
         const messageId = uuidv4();
 
         sessions[socket.id].messages.push({
-          from: character.name,
+          from: "bot",
           message: finalMessage,
           id: messageId,
         });
 
         socket.emit("message", {
-          from: character.name,
+          from: "bot",
           message: finalMessage,
           id: messageId,
         });
