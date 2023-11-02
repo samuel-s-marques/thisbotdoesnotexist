@@ -30,6 +30,7 @@ socket.on("character", function (data) {
 });
 
 socket.on("image", function (data) {
+  document.getElementById("loader").style.display = "none";
   document.getElementById("img").src = data;
 });
 
