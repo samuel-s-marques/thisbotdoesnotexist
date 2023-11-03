@@ -16,6 +16,11 @@ socket.on("message", function (data) {
     notificationSound.play();
   }
 
+  const messageLoadingElement = document.getElementById("loading-message");
+  if (messageLoadingElement) {
+    messageLoadingElement.remove();
+  }
+
   appendChat(data);
 });
 
@@ -32,6 +37,33 @@ socket.on("character", function (data) {
 socket.on("image", function (data) {
   document.getElementById("loader").style.display = "none";
   document.getElementById("img").src = data;
+});
+
+socket.on("loading-message", function (data) {
+  // Chat
+  const chatElement = document.getElementById("content");
+
+  // Message Container
+  const messageContainerElement = document.createElement("div");
+  messageContainerElement.className = "message-container";
+  messageContainerElement.id = "loading-message";
+
+  // Message Element
+  const messageElement = document.createElement("div");
+  messageElement.className = `message bot`;
+
+  // Message Content Element
+  const messageContentElement = document.createElement("div");
+  messageContentElement.className = "content";
+
+  // Message Loading Element
+  const messageLoadingElement = document.createElement("div");
+  messageLoadingElement.className = "dot-flashing";
+
+  messageContentElement.appendChild(messageLoadingElement);
+  messageElement.appendChild(messageContentElement);
+  messageContainerElement.appendChild(messageElement);
+  chatElement.appendChild(messageContainerElement);
 });
 
 socket.on("tts", function (data) {
@@ -151,7 +183,10 @@ function appendChat(data) {
       messageElement.appendChild(timestampElement);
       break;
     case "system":
-      messageContentElement.insertBefore(iconElement, messageContentElement.firstChild);
+      messageContentElement.insertBefore(
+        iconElement,
+        messageContentElement.firstChild,
+      );
       break;
     default:
       messageElement.appendChild(timestampElement);
