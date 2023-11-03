@@ -1,0 +1,370 @@
+body {
+  margin: auto;
+  font-family: "Nunito", sans-serif;
+  background-color: #f4f4f4;
+}
+
+h3 {
+  padding: 0px;
+  margin: 0px;
+}
+
+#sidebar-button {
+  display: none;
+  border: none;
+  cursor: pointer;
+
+  @media screen and (max-width: 600px) {
+    display: block;
+  }
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+
+  #chat {
+    padding: 24px;
+    flex: 75%;
+
+    @media screen and (max-width: 600px) {
+      flex: 100%;
+    }
+
+    &:has(.active) {
+      flex: 100%;
+    }
+  }
+
+  #profile {
+    padding: 24px;
+    flex: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-shrink: 0;
+    align-self: stretch;
+    overflow-y: auto;
+    max-height: 100%;
+    background-color: #f9f9f9;
+
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
+
+    &:has(.active) {
+      flex: 100%;
+      display: flex;
+    }
+  }
+}
+
+#profile {
+  #image {
+    position: relative;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      display: block;
+    }
+
+    #overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      box-sizing: border-box;
+      color: white;
+      font-size: 20px;
+      padding: 60px 12px 12px 12px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+      border-radius: 0 0 16px 16px;
+    }
+  }
+
+  #data-table {
+    padding-left: 12px;
+    padding-right: 12px;
+
+    table {
+      width: 100%;
+    }
+
+    th {
+      text-align: left;
+
+      @media screen and (max-width: 800px) {
+        display: inline-block;
+        width: 100%;
+      }
+    }
+
+    td {
+      text-align: right;
+      text-transform: capitalize;
+
+      @media screen and (max-width: 800px) {
+        text-align: left;
+        display: inline-block;
+      }
+    }
+  }
+
+  #summary {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+
+  #content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+    overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    height: 100%;
+
+    .message-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+
+      &:has(.bot) {
+        justify-content: flex-start;
+      }
+
+      &:has(.user) {
+        justify-content: flex-end;
+      }
+
+      &:has(.system) {
+        justify-content: center;
+      }
+    }
+
+    .message {
+      display: inline-block;
+      border-radius: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      position: relative;
+      min-width: 5%;
+      max-width: 50%;
+    }
+
+    .audio-container {
+      .audio-button {
+        font-size: 28px;
+        cursor: pointer;
+      }
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #e1e1e1;
+      color: black;
+      border-radius: 0 14px 14px 14px;
+
+      .timestamp {
+        color: rgba(140, 140, 140, 1);
+      }
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #007aff;
+      color: white;
+      border-radius: 14px 0 14px 14px;
+
+      .timestamp {
+        color: rgba(220, 220, 220, 1);
+      }
+    }
+
+    .system {
+      background-color: rgba(223, 70, 85, 0.8);
+      color: white;
+      text-align: center;
+      align-self: center;
+
+      .material-symbols-outlined {
+        vertical-align: middle;
+      }
+    }
+  }
+
+  #input {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+    margin-top: 10px;
+
+    input {
+      width: 95%;
+      padding: 8px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      background: #fff;
+
+      &::placeholder {
+        color: #e0e0e0;
+      }
+
+      @media screen and (max-width: 600px) {
+        width: 90%;
+      }
+    }
+
+    button {
+      width: 5%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      background: #fff;
+
+      @media screen and (max-width: 800px) {
+        width: 10%;
+      }
+    }
+  }
+}
+
+#loader {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  align-items: center;
+  z-index: 4;
+}
+
+.loading {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid #007aff;
+  animation:
+    l20-1 0.8s infinite linear alternate,
+    l20-2 1.6s infinite linear;
+}
+
+@keyframes l20-1 {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+  }
+  12.5% {
+    clip-path: polygon(
+      50% 50%,
+      0 0,
+      50% 0%,
+      100% 0%,
+      100% 0%,
+      100% 0%,
+      100% 0%
+    );
+  }
+  25% {
+    clip-path: polygon(
+      50% 50%,
+      0 0,
+      50% 0%,
+      100% 0%,
+      100% 100%,
+      100% 100%,
+      100% 100%
+    );
+  }
+  50% {
+    clip-path: polygon(
+      50% 50%,
+      0 0,
+      50% 0%,
+      100% 0%,
+      100% 100%,
+      50% 100%,
+      0% 100%
+    );
+  }
+  62.5% {
+    clip-path: polygon(
+      50% 50%,
+      100% 0,
+      100% 0%,
+      100% 0%,
+      100% 100%,
+      50% 100%,
+      0% 100%
+    );
+  }
+  75% {
+    clip-path: polygon(
+      50% 50%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      50% 100%,
+      0% 100%
+    );
+  }
+  100% {
+    clip-path: polygon(
+      50% 50%,
+      50% 100%,
+      50% 100%,
+      50% 100%,
+      50% 100%,
+      50% 100%,
+      0% 100%
+    );
+  }
+}
+@keyframes l20-2 {
+  0% {
+    transform: scaleY(1) rotate(0deg);
+  }
+  49.99% {
+    transform: scaleY(1) rotate(135deg);
+  }
+  50% {
+    transform: scaleY(-1) rotate(0deg);
+  }
+  100% {
+    transform: scaleY(-1) rotate(-135deg);
+  }
+}
+
+@keyframes dot-flashing {
+  0% {
+    content: ".   ";
+  }
+  33% {
+    content: "..  ";
+  }
+  66% {
+    content: "... ";
+  }
+  100% {
+    content: ".   ";
+  }
+}
+
+.dot-flashing::before {
+  content: ".   ";
+  animation: dot-flashing 1s infinite;
+  font-size: 24px;
+}

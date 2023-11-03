@@ -29,7 +29,7 @@ export async function processImage(images: string[]): Promise<string[]> {
       listOfImages.push(`output/images/${uuid}.png`);
     }
 
-    console.log("Images processed and saved.");
+    console.log(`🤖 [server]: Images processed and saved.`);
   } catch (error) {
     console.error("Error processing images: ", error);
   }
@@ -69,7 +69,7 @@ export function imagePromptBuilder(character: Character) {
   let prompt = "RAW Photo, DSLR BREAK ";
 
   prompt += `${character.bodyType.type} `;
-  prompt += `${character.ethnicity} ${character.occupation}, `;
+  prompt += `${character.skinTone} skin ${character.ethnicity} ${character.occupation}, `;
   prompt += `${character.age} years old ${character.sex}, `;
   prompt += `${character.hairColor} color ${character.hairStyle} hairstyle, `;
   prompt += `${character.eyeColor} eyes, `;
@@ -88,12 +88,7 @@ export function negativeImagePromptBuilder(sex: string): string {
   let negativePrompts = [
     "paintings",
     "sketches",
-    "(worst quality: 2)",
-    "(low quality: 2)",
-    "(normal quality: 2)",
     "lowres",
-    "((monochrome))",
-    "((grayscale))",
     "bad anatomy",
     "DeepNegative",
     "facing away",
@@ -125,17 +120,33 @@ export function negativeImagePromptBuilder(sex: string): string {
 export function promptBuilder(session: any): string {
   let prompt: string = pListBuilder(session.character);
   let lastMessages = session.messages.slice(-5);
+  let lastSender = "character";
 
   for (let message of lastMessages) {
-    if (message.from === "User") {
-      if (message.message.endsWith("\nUser:")) {
-        prompt += `${message.message}\n${session.character.name}:`;
+    if (message.from === "user") {
+      // Check if the last sender was the character and append accordingly
+      if (lastSender === "character") {
+        prompt += `\nUser:${message.message}`;
       } else {
-        prompt += `\nUser:${message.message}\n${session.character.name}:`;
+        prompt += `${message.message}`;
       }
+      // Update the last sender to "user"
+      lastSender = "user";
     } else {
-      prompt += `\n${session.character.name}: ${message.message}\nUser:`;
+      // Check if the last sender was the user and append accordingly
+      if (lastSender === "user") {
+        prompt += `\n${session.character.name}:${message.message}`;
+      } else {
+        prompt += `${message.message}`;
+      }
+      // Update the last sender to "character"
+      lastSender = "character";
     }
+  }
+
+  // Ensure the last line ends with \ncharacter.name:
+  if (!prompt.endsWith(`\n${session.character.name}:`)) {
+    prompt += `\n${session.character.name}:`;
   }
 
   return prompt;
