@@ -5,20 +5,6 @@ import { processFile } from "../util/util.js";
 import dotenv from "dotenv";
 import { VoiceModel } from "./voice_model.js";
 
-export type Emotion =
-  | "female_happy"
-  | "female_sad"
-  | "female_angry"
-  | "female_fearful"
-  | "female_disgust"
-  | "female_surprised"
-  | "male_happy"
-  | "male_sad"
-  | "male_angry"
-  | "male_fearful"
-  | "male_disgust"
-  | "male_surprised";
-
 export class PlayHtApi {
   private baseUrl: string;
   private userId: string;
