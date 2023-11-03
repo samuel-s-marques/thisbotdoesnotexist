@@ -36,7 +36,7 @@ If you encounter any bugs or issues, please report them in the [issue tracker](h
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the GNU GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Authors
 
