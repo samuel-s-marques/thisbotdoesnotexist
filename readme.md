@@ -21,7 +21,7 @@ To get started with thisbotdoesnotexist.com, follow these steps:
 1. Clone the repository: `git clone https://github.com/samuel-s-marques/thisbotdoesnotexist.git`
 2. Navigate into the project directory: `cd thisbotdoesnotexist`
 3. Install dependencies: `npm i`
-4. Fill the .env with values
+4. Fill the .env-example with values and rename it to `.env`
 
 ## Usage
 
