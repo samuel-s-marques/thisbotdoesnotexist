@@ -88,12 +88,7 @@ export function negativeImagePromptBuilder(sex: string): string {
   let negativePrompts = [
     "paintings",
     "sketches",
-    "(worst quality: 2)",
-    "(low quality: 2)",
-    "(normal quality: 2)",
     "lowres",
-    "((monochrome))",
-    "((grayscale))",
     "bad anatomy",
     "DeepNegative",
     "facing away",
