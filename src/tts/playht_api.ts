@@ -55,7 +55,7 @@ export class PlayHtApi {
         data: {
           text: text,
           voice: voice.id,
-          quality: "draft", // TODO: change quality to test it
+          quality: "medium", // TODO: change quality to test it
           output_format: "mp3",
           voice_engine: voice.engine,
         }
