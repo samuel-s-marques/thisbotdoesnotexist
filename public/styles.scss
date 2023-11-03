@@ -211,7 +211,7 @@ h3 {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 8px solid #007AFF;
+  border: 8px solid #007aff;
   animation:
     l20-1 0.8s infinite linear alternate,
     l20-2 1.6s infinite linear;
@@ -301,4 +301,25 @@ h3 {
   100% {
     transform: scaleY(-1) rotate(-135deg);
   }
+}
+
+@keyframes dot-flashing {
+  0% {
+    content: ".   ";
+  }
+  33% {
+    content: "..  ";
+  }
+  66% {
+    content: "... ";
+  }
+  100% {
+    content: ".   ";
+  }
+}
+
+.dot-flashing::before {
+  content: ".   ";
+  animation: dot-flashing 1s infinite;
+  font-size: 24px;
 }
