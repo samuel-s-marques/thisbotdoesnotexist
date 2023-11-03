@@ -4,6 +4,8 @@
 
 thisbotdoesnotexist is a unique project that combines advanced image generation, procedural attribute creation, and AI-powered chat capabilities to create and interact with unique, non-existent individuals. It mimics the concept of the 'thispersondoesnotexist.com' website but with a more immersive and comprehensive twist.
 
+Here's a [video](https://www.youtube.com/watch?v=-PeW9WDgzZ4) of the project working.
+
 ## Features
 
 1. **Image Generation**: thisbotdoesnotexist generates realistic images of non-existent people. 
