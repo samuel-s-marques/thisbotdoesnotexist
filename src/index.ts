@@ -63,7 +63,7 @@ io.on("connection", async (socket) => {
   });
 
   try {
-    console.log("Generating image");
+    console.log(`🤖 [server]: Making request to Stable Diffusion.`);
 
     const stableDiffusionResponse = await axios.post(
       `${sdHost}/sdapi/v1/txt2img`,
@@ -163,8 +163,6 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("disconnect", async () => {
-    console.log(`User disconnected: ${socket.id}`);
-
     if (sessions[socket.id].image) {
       fs.unlink(sessions[socket.id].image, (err) => {
         if (err) {
@@ -180,17 +178,6 @@ io.on("connection", async (socket) => {
 app.use("/output/", express.static(path.join(__dirname, "output")));
 
 app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/api/character", (req, res) => {
-  const forge = new CharacterForge();
-  const character = forge.forge();
-  res.send(JSON.stringify(character));
-});
-
-app.post("/api/kobold", (req, res) => {
-  console.log(req.body);
-  res.json({ requestBody: req.body });
-});
 
 app.listen(port, () => {
   console.log(`⚡️ [server]: Server is running at http://localhost:${port}.`);
