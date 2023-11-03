@@ -29,7 +29,7 @@ export async function processImage(images: string[]): Promise<string[]> {
       listOfImages.push(`output/images/${uuid}.png`);
     }
 
-    console.log("Images processed and saved.");
+    console.log(`🤖 [server]: Images processed and saved.`);
   } catch (error) {
     console.error("Error processing images: ", error);
   }
@@ -148,8 +148,6 @@ export function promptBuilder(session: any): string {
   if (!prompt.endsWith(`\n${session.character.name}:`)) {
     prompt += `\n${session.character.name}:`;
   }
-
-  console.log(prompt);
 
   return prompt;
 }
