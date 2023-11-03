@@ -14,14 +14,13 @@ import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { ElevenLabsApi } from "./tts/elevenlabs_api.js";
 import { PlayHtApi } from "./tts/playht_api.js";
+import { KoboldApi } from "./llm/kobold_api.js";
+import { OobaboogaApi } from "./llm/oobabooga_api.js";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-
-const kbHost = process.env.KB_HOST;
-const kbPort = process.env.KB_PORT;
 
 const sdHost = process.env.SD_HOST;
 const sdPort = process.env.SD_PORT;
@@ -34,6 +33,7 @@ const io = new Server(7000, {
 });
 
 const ttsApi = new ElevenLabsApi();
+const textGenApi = new OobaboogaApi();
 
 const __dirname = path.resolve();
 var sessions = {};
@@ -64,8 +64,9 @@ io.on("connection", async (socket) => {
 
   try {
     console.log("Generating image");
+
     const stableDiffusionResponse = await axios.post(
-      `${sdHost}:${sdPort}/sdapi/v1/txt2img`,
+      `${sdHost}/sdapi/v1/txt2img`,
       {
         prompt: imagePromptBuilder(sessions[socket.id].character),
         negative_prompt: negativeImagePromptBuilder(
@@ -98,42 +99,7 @@ io.on("connection", async (socket) => {
     const prompt = promptBuilder(sessions[socket.id]);
 
     try {
-      const koboldResponse = await axios.post(
-        `${kbHost}:${kbPort}/api/v1/generate`,
-        {
-          prompt: prompt,
-          use_story: false,
-          use_memory: false,
-          use_authors_note: false,
-          use_world_info: false,
-          max_content_length: 1000,
-          max_length: 180,
-          rep_pen: 1.2,
-          rep_pen_range: 1024,
-          rep_pen_slope: 0.7,
-          temperature: 0.2,
-          tfs: 0.9,
-          top_a: 0,
-          top_k: 0,
-          top_p: 0.9,
-          typical: 0.1,
-          sampler_order: [6, 0, 1, 3, 4, 2, 5],
-          singleline: false,
-          sampler_seed: 69420,
-          sampler_full_determinism: false,
-          frmttriminc: false,
-          frmtrmblln: false,
-          stop_sequence: ["\nUser:", "\nYou:", "\n\n"],
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-      console.log(
-        `Server responded with status code: ${koboldResponse.status}`,
-      );
-
-      const serverMessage = koboldResponse.data.results[0].text;
+      const serverMessage = await textGenApi.getResponse(prompt, character.name);
       let trimmedMessage = serverMessage.trim();
 
       if (trimmedMessage.startsWith(`${character.name}:`)) {
