@@ -125,18 +125,36 @@ export function negativeImagePromptBuilder(sex: string): string {
 export function promptBuilder(session: any): string {
   let prompt: string = pListBuilder(session.character);
   let lastMessages = session.messages.slice(-5);
+  let lastSender = "character";
 
   for (let message of lastMessages) {
     if (message.from === "user") {
-      if (message.message.endsWith("\nUser:")) {
-        prompt += `${message.message}\n${session.character.name}:`;
+      // Check if the last sender was the character and append accordingly
+      if (lastSender === "character") {
+        prompt += `\nUser:${message.message}`;
       } else {
-        prompt += `\nUser:${message.message}\n${session.character.name}:`;
+        prompt += `${message.message}`;
       }
+      // Update the last sender to "user"
+      lastSender = "user";
     } else {
-      prompt += `\n${session.character.name}: ${message.message}\nUser:`;
+      // Check if the last sender was the user and append accordingly
+      if (lastSender === "user") {
+        prompt += `\n${session.character.name}:${message.message}`;
+      } else {
+        prompt += `${message.message}`;
+      }
+      // Update the last sender to "character"
+      lastSender = "character";
     }
   }
+
+  // Ensure the last line ends with \ncharacter.name:
+  if (!prompt.endsWith(`\n${session.character.name}:`)) {
+    prompt += `\n${session.character.name}:`;
+  }
+
+  console.log(prompt);
 
   return prompt;
 }
