@@ -6,7 +6,7 @@ thisbotdoesnotexist is a unique project that combines advanced image generation,
 
 ## Features
 
-1. **Procedural Image Generation**: thisbotdoesnotexist.com generates realistic images of non-existent people. 
+1. **Image Generation**: thisbotdoesnotexist generates realistic images of non-existent people. 
 
 2. **Procedural Attribute Generation**: Beyond just images, the system also creates a complete persona for each generated individual, including their characteristics, biography, likes, dislikes, and more.
 
@@ -16,7 +16,7 @@ thisbotdoesnotexist is a unique project that combines advanced image generation,
 
 ## Installation
 
-To get started with thisbotdoesnotexist.com, follow these steps:
+To get started with thisbotdoesnotexist, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/samuel-s-marques/thisbotdoesnotexist.git`
 2. Navigate into the project directory: `cd thisbotdoesnotexist`
@@ -26,10 +26,6 @@ To get started with thisbotdoesnotexist.com, follow these steps:
 ## Usage
 
 1. Run the main script: `npm index.js`
-
-## Contribution
-
-Interested in contributing? We'd love to have you! Check out our [Contribution Guidelines](CONTRIBUTING.md) to get started.
 
 ## Support
 
@@ -42,9 +38,3 @@ This project is licensed under the GNU GPLv3 License - see the [LICENSE.md](LICE
 ## Authors
 
 * **Samuel S Marques** - *Initial work* - [samuel-s-marques](https://github.com/samuel-s-marques)
-
-## Acknowledgements
-
-We acknowledge the use of open-source libraries and APIs, including but not limited to GPT-4 for AI chat capabilities and various image and text-to-speech generation libraries.
-
-Please note, thisbotdoesnotexist.com is a project in progress. We're actively working to improve and add more features. Stay tuned for more updates!
