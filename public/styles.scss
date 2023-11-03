@@ -1,6 +1,7 @@
 body {
   margin: auto;
   font-family: "Nunito", sans-serif;
+  background-color: #f4f4f4;
 }
 
 h3 {
@@ -8,14 +9,31 @@ h3 {
   margin: 0px;
 }
 
+#sidebar-button {
+  display: none;
+  border: none;
+  cursor: pointer;
+
+  @media screen and (max-width: 600px) {
+    display: block;
+  }
+}
+
 #container {
   display: flex;
   height: 100vh;
-  background-color: #f4f4f4;
 
   #chat {
     padding: 24px;
     flex: 75%;
+
+    @media screen and (max-width: 600px) {
+      flex: 100%;
+    }
+
+    &:has(.active) {
+      flex: 100%;
+    }
   }
 
   #profile {
@@ -29,6 +47,15 @@ h3 {
     overflow-y: auto;
     max-height: 100%;
     background-color: #f9f9f9;
+
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
+
+    &:has(.active) {
+      flex: 100%;
+      display: flex;
+    }
   }
 }
 
@@ -193,6 +220,10 @@ h3 {
       &::placeholder {
         color: #e0e0e0;
       }
+
+      @media screen and (max-width: 600px) {
+        width: 90%;
+      }
     }
 
     button {
@@ -201,6 +232,10 @@ h3 {
       border-radius: 6px;
       border: 1px solid #e0e0e0;
       background: #fff;
+
+      @media screen and (max-width: 800px) {
+        width: 10%;
+      }
     }
   }
 }

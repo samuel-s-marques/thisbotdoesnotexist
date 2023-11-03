@@ -1,6 +1,7 @@
 body {
   margin: auto;
   font-family: "Nunito", sans-serif;
+  background-color: #f4f4f4;
 }
 
 h3 {
@@ -8,14 +9,32 @@ h3 {
   margin: 0px;
 }
 
+#sidebar-button {
+  display: none;
+  border: none;
+  cursor: pointer;
+}
+@media screen and (max-width: 600px) {
+  #sidebar-button {
+    display: block;
+  }
+}
+
 #container {
   display: flex;
   height: 100vh;
-  background-color: #f4f4f4;
 }
 #container #chat {
   padding: 24px;
   flex: 75%;
+}
+@media screen and (max-width: 600px) {
+  #container #chat {
+    flex: 100%;
+  }
+}
+#container #chat:has(.active) {
+  flex: 100%;
 }
 #container #profile {
   padding: 24px;
@@ -28,6 +47,15 @@ h3 {
   overflow-y: auto;
   max-height: 100%;
   background-color: #f9f9f9;
+}
+@media screen and (max-width: 600px) {
+  #container #profile {
+    display: none;
+  }
+}
+#container #profile:has(.active) {
+  flex: 100%;
+  display: flex;
 }
 
 #profile #image {
@@ -169,12 +197,22 @@ h3 {
 #chat #input input::placeholder {
   color: #e0e0e0;
 }
+@media screen and (max-width: 600px) {
+  #chat #input input {
+    width: 90%;
+  }
+}
 #chat #input button {
   width: 5%;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #e0e0e0;
   background: #fff;
+}
+@media screen and (max-width: 800px) {
+  #chat #input button {
+    width: 10%;
+  }
 }
 
 #loader {
