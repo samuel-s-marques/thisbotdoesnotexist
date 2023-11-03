@@ -69,7 +69,7 @@ export function imagePromptBuilder(character: Character) {
   let prompt = "RAW Photo, DSLR BREAK ";
 
   prompt += `${character.bodyType.type} `;
-  prompt += `${character.ethnicity} ${character.occupation}, `;
+  prompt += `${character.skinTone} skin ${character.ethnicity} ${character.occupation}, `;
   prompt += `${character.age} years old ${character.sex}, `;
   prompt += `${character.hairColor} color ${character.hairStyle} hairstyle, `;
   prompt += `${character.eyeColor} eyes, `;
