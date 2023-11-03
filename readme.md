@@ -1,8 +1,8 @@
-# thisbotdoesnotexist.com 
+# thisbotdoesnotexist
 
 ## Description
 
-thisbotdoesnotexist.com is a unique project that combines advanced image generation, procedural attribute creation, and AI-powered chat capabilities to create and interact with unique, non-existent individuals. It mimics the concept of the 'thispersondoesnotexist.com' website but with a more immersive and comprehensive twist.
+thisbotdoesnotexist is a unique project that combines advanced image generation, procedural attribute creation, and AI-powered chat capabilities to create and interact with unique, non-existent individuals. It mimics the concept of the 'thispersondoesnotexist.com' website but with a more immersive and comprehensive twist.
 
 ## Features
 
@@ -18,9 +18,10 @@ thisbotdoesnotexist.com is a unique project that combines advanced image generat
 
 To get started with thisbotdoesnotexist.com, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/samuel-s-marques/thisbotdoesnotexist.com.git`
-2. Navigate into the project directory: `cd thisbotdoesnotexist.com`
+1. Clone the repository: `git clone https://github.com/samuel-s-marques/thisbotdoesnotexist.git`
+2. Navigate into the project directory: `cd thisbotdoesnotexist`
 3. Install dependencies: `npm i`
+4. Fill the .env with values
 
 ## Usage
 
@@ -32,7 +33,7 @@ Interested in contributing? We'd love to have you! Check out our [Contribution G
 
 ## Support
 
-If you encounter any bugs or issues, please report them in the [issue tracker](https://github.com/samuel-s-marques/thisbotdoesnotexist.com/issues).
+If you encounter any bugs or issues, please report them in the [issue tracker](https://github.com/samuel-s-marques/thisbotdoesnotexist/issues).
 
 ## License
 
