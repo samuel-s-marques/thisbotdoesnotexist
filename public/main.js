@@ -198,8 +198,6 @@ function appendChat(data) {
 }
 
 function getMessage(message, name) {
-  console.log(message);
-
   if (message.includes(`${name}:`)) {
     return message.split(`${name}:`)[1];
   } else {
