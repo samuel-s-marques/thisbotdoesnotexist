@@ -129,6 +129,27 @@ document.getElementById("send").onclick = function () {
 };
 
 document
+  .getElementById("sidebar-button")
+  .addEventListener("click", function () {
+    const profileElement = document.getElementById("profile");
+    const chatElement = document.getElementById("chat");
+
+    if (profileElement.className === "active") {
+      profileElement.className = "";
+      profileElement.style.display = "none";
+
+      chatElement.className = "active";
+      chatElement.style.display = "flex";
+    } else {
+      profileElement.className = "active";
+      profileElement.style.display = "flex";
+
+      chatElement.className = "";
+      chatElement.style.display = "none";
+    }
+  });
+
+document
   .getElementById("message-input")
   .addEventListener("keyup", function (event) {
     event.preventDefault();
