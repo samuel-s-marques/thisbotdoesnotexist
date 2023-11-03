@@ -62,9 +62,21 @@ h3 {
 #profile #data-table th {
   text-align: left;
 }
+@media screen and (max-width: 800px) {
+  #profile #data-table th {
+    display: inline-block;
+    width: 100%;
+  }
+}
 #profile #data-table td {
   text-align: right;
   text-transform: capitalize;
+}
+@media screen and (max-width: 800px) {
+  #profile #data-table td {
+    text-align: left;
+    display: inline-block;
+  }
 }
 #profile #summary {
   padding-left: 12px;
