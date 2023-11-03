@@ -99,7 +99,11 @@ io.on("connection", async (socket) => {
     const prompt = promptBuilder(sessions[socket.id]);
 
     try {
-      const serverMessage = await textGenApi.getResponse(prompt, character.name);
+      socket.emit("loading-message", true);
+      const serverMessage = await textGenApi.getResponse(
+        prompt,
+        character.name,
+      );
       let trimmedMessage = serverMessage.trim();
 
       if (trimmedMessage.startsWith(`${character.name}:`)) {
