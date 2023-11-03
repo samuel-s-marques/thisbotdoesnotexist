@@ -81,6 +81,7 @@ h3 {
   gap: 5px;
   align-items: flex-start;
   overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
   height: 100%;
 }
 #chat #content .message-container {
